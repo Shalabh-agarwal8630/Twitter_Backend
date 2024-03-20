@@ -2,6 +2,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import express from 'express';
 import bodyParser from 'body-parser';
+import { Tweet } from './tweet';
 import cors from 'cors'
 
 import { User } from './user'
@@ -14,15 +15,25 @@ export async function initServer() {
    const graphqlserver = new ApolloServer<GraphqlContext>({
       typeDefs: `
   ${User.types}
+  ${Tweet.types}
   type Query{
      ${User.queries}
+     ${Tweet.queries}
+  }
+  type Mutation{
+   ${Tweet.mutations}
   }
   `,
       resolvers: {
          Query: {
-            ...User.resolvers.queries
+            ...User.resolvers.queries,
+            ...Tweet.resolvers.queries
          },
-
+         Mutation: {
+            ...Tweet.resolvers.mutations
+         },
+         ...Tweet.resolvers.extraResolvers,
+         ...User.resolvers.extraResolvers
       },
 
    });
@@ -31,7 +42,7 @@ export async function initServer() {
    app.use("/graphql", expressMiddleware(graphqlserver, {
       context: async ({ req, res }) => {
          return {
-            user:req.headers.authorization? JWTService.decodeToken(req.headers.authorization.split('Bearer ')[1]):undefined
+            user: req.headers.authorization ? JWTService.decodeToken(req.headers.authorization.split('Bearer ')[1]) : undefined
          }
       }
    }))

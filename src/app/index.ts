@@ -12,6 +12,11 @@ export async function initServer() {
    const app = express();
    app.use(bodyParser.json())
    app.use(cors())
+
+   app.get('/',(req,res)=>{
+      res.status(200).json({message:"Everything is good!"});
+   })
+
    const graphqlserver = new ApolloServer<GraphqlContext>({
       typeDefs: `
   ${User.types}
@@ -22,6 +27,7 @@ export async function initServer() {
   }
   type Mutation{
    ${Tweet.mutations}
+   ${User.mutations}
   }
   `,
       resolvers: {
@@ -30,7 +36,8 @@ export async function initServer() {
             ...Tweet.resolvers.queries
          },
          Mutation: {
-            ...Tweet.resolvers.mutations
+            ...Tweet.resolvers.mutations,
+            ...User.resolvers.mutations
          },
          ...Tweet.resolvers.extraResolvers,
          ...User.resolvers.extraResolvers

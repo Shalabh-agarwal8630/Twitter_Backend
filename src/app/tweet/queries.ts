@@ -1,2 +1,4 @@
-export const queries=`
-getAllTweets:[Tweet]`;
+export const queries = `
+getAllTweets:[Tweet]
+getSignedURLForTweet(imageName:String!,  imageType:String!):String
+`

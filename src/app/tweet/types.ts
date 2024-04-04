@@ -10,7 +10,7 @@ export const types =
  id: ID!
  content:String!
  author:User 
- imageUrl:String 
+ imageURL:String 
 
 }
-`;
+`; 
